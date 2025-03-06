@@ -1,8 +1,10 @@
+"use client";
 import { cn } from "@/lib/utils";
 import { type Task } from "@prisma/client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { Check, LoaderCircle, LucideProps, Trash, X } from "lucide-react";
+import { useParams } from "next/navigation";
 import { ForwardRefExoticComponent } from "react";
 import ActionTooltip from "../ActionTooltip";
 import { Separator } from "../ui/separator";
@@ -14,23 +16,21 @@ interface TaskProps {
 
 const Task = ({ task, type }: TaskProps) => {
   const queryClient = useQueryClient();
+  const params = useParams();
 
   const { mutateAsync: TaskState, isPending } = useMutation({
     mutationKey: [task.projectId],
     mutationFn: async () => {
-      try {
-        await axios.put("/api/tasks", {
-          id: task.id,
-          projectId: task.projectId,
-          state: task.completed,
-        });
-      } catch (e) {
-        console.error(e);
-      }
+      await axios.put("/api/tasks", {
+        id: task.id,
+        projectId: task.projectId,
+        state: task.completed,
+      });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: [task.projectId],
+        queryKey: ["project", params.projectId],
+        exact: true,
       });
     },
   });
@@ -38,24 +38,22 @@ const Task = ({ task, type }: TaskProps) => {
   const { mutateAsync: deleteTask, isPending: deleteLoading } = useMutation({
     mutationKey: [task.projectId],
     mutationFn: async () => {
-      try {
-        await axios.delete("/api/tasks", {
-          data: {
-            id: task.id,
-            projectId: task.projectId,
-            state: task.completed,
-          },
-        });
-      } catch (e) {
-        console.error(e);
-      }
+      await axios.delete("/api/tasks", {
+        data: {
+          id: task.id,
+          projectId: task.projectId,
+          state: task.completed,
+        },
+      });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: [task.projectId],
+        queryKey: ["project", params.projectId],
+        exact: true,
       });
     },
   });
+
   return (
     <li
       key={task.id}

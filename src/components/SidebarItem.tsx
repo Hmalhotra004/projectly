@@ -5,6 +5,7 @@ import { Project } from "@prisma/client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { Trash } from "lucide-react";
+import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import Loader from "./Loader";
 
@@ -37,7 +38,7 @@ const SidebarItem = ({ project, isLoading }: ProjectItemProps) => {
       key={project.id}
       className="flex"
     >
-      <a
+      <Link
         href={`/projects/${project.id}`}
         className={cn(
           "flex-1 text-left break-words max-w-full px-2 py-1 rounded-sm my-1 transition-colors cursor-pointer",
@@ -51,7 +52,7 @@ const SidebarItem = ({ project, isLoading }: ProjectItemProps) => {
         ) : (
           <span>{project.name}</span>
         )}
-      </a>
+      </Link>
 
       <ProjectDeleteAlert
         project={project}

@@ -6,13 +6,11 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { LogOut } from "lucide-react";
 import { signOut } from "next-auth/react";
-import { useParams } from "next/navigation";
 import CreateProjectModal from "./modals/CreateProjectModal";
 import SidebarItem from "./SidebarItem";
 import SkeletonProject from "./SkeletonProject";
 
 const Sidebar = () => {
-  const params = useParams();
   const {
     data: projects,
     isLoading,
@@ -23,11 +21,6 @@ const Sidebar = () => {
       const response = await axios.get("/api/projects");
       return response.data;
     },
-    refetchInterval: 15 * 60 * 1000,
-    // staleTime: 30 * 60 * 1000,
-    // cacheTime: 30 * 60 * 1000,
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: false,
   });
 
   return (

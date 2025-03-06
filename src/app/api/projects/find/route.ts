@@ -2,7 +2,7 @@ import getCurrentUser from "@/actions/getCurrentUser";
 import db from "@/lib/db";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function POST(req: NextRequest) {
+export async function GET(req: NextRequest) {
   try {
     const profile = await getCurrentUser();
 
@@ -10,7 +10,14 @@ export async function POST(req: NextRequest) {
       return NextResponse.json("Unauthorized", { status: 401 });
     }
 
-    const { projectId } = await req.json();
+    const projectId = req.nextUrl.searchParams.get("projectId");
+
+    if (!projectId) {
+      return NextResponse.json(
+        { error: "Project ID is required" },
+        { status: 400 }
+      );
+    }
 
     const project = await db.project.findUnique({
       where: {
